@@ -1,3 +1,5 @@
+
+
 # Kittu - PC Stats Recorder
 
 **Kittu** is a command-line tool for recording various PC statistics such as CPU usage, memory usage, disk usage, network statistics, and battery percentage. The recorded data can be printed to the console or saved to a CSV file for further analysis.
@@ -15,13 +17,30 @@
 
 ## Installation
 
-You can install **Kittu** using `pip`. Run the following command in your terminal:
+You can install **Kittu** by following these steps:
 
-```bash
-pip install .
-```
+1. Clone the repository to your local machine:
 
-Make sure to run this command in the same directory as `setup.py` or specify the path to the directory containing `setup.py`.
+   ```bash
+   git clone https://github.com/SujitAkulwar/kittu
+   ```
+2. Navigate to the project directory:
+
+   ```bash
+   cd kittu
+   ```
+3. Install the required dependencies:
+
+   ```bash
+   pip install psutil setuptools
+   ```
+4. Install **Kittu** in editable mode:
+
+   ```bash
+   pip install -e .
+   ```
+
+Once installed, you can use the `kittu` command in your terminal.
 
 ## Usage
 

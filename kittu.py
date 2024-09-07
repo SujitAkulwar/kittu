@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import psutil
 import time
@@ -5,8 +7,8 @@ import sys
 import csv
 import os
 
-def record_stats(print_output, time_interval, time_period, file_name):
-    iterations = (time_period * 60) // time_interval 
+def record_stats(print_output, time_interval, time_period, save):
+    iterations = (time_period * 60) // time_interval
     print(f"Total Iterations: {iterations}")
 
     title = [
@@ -15,18 +17,18 @@ def record_stats(print_output, time_interval, time_period, file_name):
     ]
 
     file = None
-    if file_name is not None:
-        if not file_name.lower().endswith('.csv'):
-            file_name += '.csv'
-        if os.path.exists(file_name):
-            raise FileExistsError(f"The file '{file_name}' already exists.")
+    if save is not None:
+        if not save.lower().endswith('.csv'):
+            save += '.csv'
+        if os.path.exists(save):
+            raise FileExistsError(f"The file '{save}' already exists.")
 
         try:
-            file = open(file_name, 'w', newline='')
+            file = open(save, 'w', newline='')
             csv_writer = csv.writer(file)
             csv_writer.writerow(title)
         except IOError as e:
-            print(f"Error opening file {file_name}: {e}")
+            print(f"Error opening file {save}: {e}")
             sys.exit(1)
 
     if print_output:
@@ -34,42 +36,37 @@ def record_stats(print_output, time_interval, time_period, file_name):
 
     try:
         for i in range(iterations):
-            try:
-                cpu_usage = psutil.cpu_percent(interval=None)
-                time.sleep(time_interval) 
+            cpu_usage = psutil.cpu_percent(interval=None)
+            time.sleep(time_interval)
 
-                memory_info = psutil.virtual_memory()
-                disk_usage = psutil.disk_usage('/')
-                network_info = psutil.net_io_counters()
-                sensors_battery = psutil.sensors_battery()
+            memory_info = psutil.virtual_memory()
+            disk_usage = psutil.disk_usage('/')
+            network_info = psutil.net_io_counters()
+            sensors_battery = psutil.sensors_battery()
 
-                battery_percentage = "N/A" if sensors_battery is None else f"{sensors_battery.percent}%"
+            battery_percentage = "N/A" if sensors_battery is None else f"{sensors_battery.percent}%"
 
-                stats = [
-                    i + 1,  
-                    cpu_usage,
-                    memory_info.percent,
-                    disk_usage.percent,
-                    network_info.bytes_sent,
-                    network_info.bytes_recv,
-                    battery_percentage
-                ]
+            stats = [
+                i + 1,
+                cpu_usage,
+                memory_info.percent,
+                disk_usage.percent,
+                network_info.bytes_sent,
+                network_info.bytes_recv,
+                battery_percentage
+            ]
 
-                if print_output:
-                    print(stats)
+            if print_output:
+                print(stats)
 
-                if file:
-                    try:
-                        csv_writer.writerow(stats)
-                    except IOError as e:
-                        print(f"Error writing to file {file_name}: {e}")
-                        sys.exit(0)
-                    except KeyboardInterrupt:
-                        print("\nRecording stopped by user.")
-                        sys.exit(0)
-            except KeyboardInterrupt:
-                print("\nRecording stopped by user.")
-                sys.exit(0)
+            if file:
+                try:
+                    csv_writer.writerow(stats)
+                except IOError as e:
+                    print(f"Error writing to file {save}: {e}")
+                    sys.exit(1)
+    except KeyboardInterrupt:
+        print("\nRecording stopped by user.")
     finally:
         if file:
             file.close()
@@ -92,7 +89,7 @@ def main():
     print("Initializing...")
 
     try:
-        record_stats(not args.no_print, args.time_interval, args.time_period, args.file_name)
+        record_stats(not args.no_print, args.time_interval, args.time_period, args.save)
     except KeyboardInterrupt:
         print("\nRecording stopped by user.")
         sys.exit(0)
