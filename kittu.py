@@ -84,7 +84,7 @@ def main():
                         help='Interval in seconds between each recording of computer stats. Default is 1 second.')
     parser.add_argument('-t', '--time_period', type=int, default=1,
                         help='Duration in minutes for recording stats. The program will record data for this period. Default is 1 minute.')
-    parser.add_argument('-f', '--file_name', type=str, default=None,
+    parser.add_argument('-s', '--save', type=str, default=None,
                         help='Path to the file where the recorded stats will be saved. If not specified, data will not be saved to a file.')
 
     args = parser.parse_args()
